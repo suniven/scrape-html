@@ -107,8 +107,8 @@ def visit(browser, session, url, vpn):
                     intermediate_urls += "{0}\t{1}\t{2}\n".format(request.response.status_code, request.url,
                                                                   request.response.headers['location'])
                     print(
-                        request.url,
                         request.response.status_code,
+                        request.url,
                         request.response.headers['location']
                     )
         if intermediate_urls:
