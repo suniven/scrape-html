@@ -94,9 +94,9 @@ def visit(browser, session, url, vpn):
         if text:
             webpage_info.text = text
         # 同时保存一份到文件夹
-        with open(file_save_folder + '/' + url.split('/')[-1] + '_page_source.html', 'w') as f:
+        with open(file_save_folder + '/' + url.split('/')[-1] + '_page_source.html', 'w', encoding='utf-8') as f:
             f.write(browser.page_source)
-        with open(file_save_folder + '/' + url.split('/')[-1] + '_text.txt', 'w') as f:
+        with open(file_save_folder + '/' + url.split('/')[-1] + '_text.txt', 'w', encoding='utf-8') as f:
             f.write(text)
         # intermediate_urls
         # Access requests via the `requests` attribute
@@ -127,15 +127,16 @@ def visit(browser, session, url, vpn):
         for img_tag in img_tags:
             try:
                 img_src = img_tag.get_attribute('src')
-                img_path = file_save_folder + '/' + img_src.split('/')[-1]
-                if not os.path.exists(img_path):
-                    print("Getting Img: {0}".format(img_src))
-                    r = requests.get(img_src, headers=headers, proxies=proxies, timeout=(8, 8))
-                    with open(img_path, "wb") as f:
-                        f.write(r.content)
-                        print("Successfully Get Img.")
-                else:
-                    print("Img Already Exists.")
+                if img_src:
+                    img_path = file_save_folder + '/' + img_src.split('/')[-1]
+                    if not os.path.exists(img_path):
+                        print("Getting Img: {0}".format(img_src))
+                        r = requests.get(img_src, headers=headers, proxies=proxies, timeout=(8, 8))
+                        with open(img_path, "wb") as f:
+                            f.write(r.content)
+                            print("Successfully Get Img.")
+                    else:
+                        print("Img Already Exists.")
             except Exception as error:
                 _logger.error(error)
     except Exception as error:
