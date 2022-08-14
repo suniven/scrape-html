@@ -25,8 +25,8 @@ headers = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
 }
 proxies = {
-    'http': 'http://127.0.0.1:10809',
-    'https': 'http://127.0.0.1:10809'
+    'http': 'http://127.0.0.1:1080',
+    'https': 'http://127.0.0.1:1080'
 }
 
 
@@ -124,39 +124,39 @@ def visit(browser, DBSession, url, vpn):
     except Exception as error:
         _logger.error("Failed to get info of {0}! {1}".format(url, error))
 
-    # 提取网页中的图片并保存
-    try:
-        img_tags = browser.find_elements_by_tag_name('img')
-        for img_tag in img_tags:
-            try:
-                img_src = img_tag.get_attribute('src')
-                if img_src:
-                    img_path = file_save_folder + '/' + img_src.split('/')[-1]
-                    if not os.path.exists(img_path):
-                        print("Getting Img: {0}".format(img_src))
-                        r = requests.get(img_src, headers=headers, proxies=proxies, timeout=(8, 8))
-                        with open(img_path, "wb") as f:
-                            f.write(r.content)
-                            print("Successfully Get Img.")
-                    else:
-                        print("Img Already Exists.")
-            except Exception as error:
-                _logger.error(error)
-    except Exception as error:
-        _logger.info("No Img or error occurs. Error: {0}".format(error))
+    # # 提取网页中的图片并保存
+    # try:
+    #     img_tags = browser.find_elements_by_tag_name('img')
+    #     for img_tag in img_tags:
+    #         try:
+    #             img_src = img_tag.get_attribute('src')
+    #             if img_src:
+    #                 img_path = file_save_folder + '/' + img_src.split('/')[-1]
+    #                 if not os.path.exists(img_path):
+    #                     print("Getting Img: {0}".format(img_src))
+    #                     r = requests.get(img_src, headers=headers, proxies=proxies, timeout=(8, 8))
+    #                     with open(img_path, "wb") as f:
+    #                         f.write(r.content)
+    #                         print("Successfully Get Img.")
+    #                 else:
+    #                     print("Img Already Exists.")
+    #         except Exception as error:
+    #             _logger.error(error)
+    # except Exception as error:
+    #     _logger.info("No Img or error occurs. Error: {0}".format(error))
 
 
 def main():
     # 正常模式
     options = {
         'proxy': {
-            'http': 'http://127.0.0.1:10809',
-            'https': 'http://127.0.0.1:10809',
+            'http': 'http://127.0.0.1:1080',
+            'https': 'http://127.0.0.1:1080',
         }
     }
     browser = webdriver.Chrome(seleniumwire_options=options)
     browser.maximize_window()
-    browser.implicitly_wait(15)
+    browser.implicitly_wait(10)
 
     # # headless模式
     # option = webdriver.ChromeOptions()
