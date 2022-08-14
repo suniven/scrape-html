@@ -9,6 +9,7 @@ from sqlalchemy import Column, String, create_engine, Integer
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects import mysql
+from sqlalchemy.pool import NullPool
 from sqlalchemy.sql import and_, asc, desc, or_
 from common.model import WebpageInfo
 import common.logger as logger
@@ -29,7 +30,7 @@ proxies = {
 }
 
 
-def visit(browser, session, url, vpn):
+def visit(browser, DBSession, url, vpn):
     # 创建存储该webpage内容的文件夹
     file_save_folder = './data/' + url.split('/')[-1] + '/' + vpn
     if not os.path.exists(file_save_folder):
@@ -116,8 +117,10 @@ def visit(browser, session, url, vpn):
             # 同时保存一份到文件夹
             with open(file_save_folder + '/' + url.split('/')[-1] + '_redirect_info.txt', 'w') as f:
                 f.write(intermediate_urls)
+        session = DBSession()
         session.add(webpage_info)
         session.commit()
+        session.close()
     except Exception as error:
         _logger.error("Failed to get info of {0}! {1}".format(url, error))
 
@@ -161,9 +164,8 @@ def main():
     # option.add_argument("--window-size=1920,1080")
     # browser = webdriver.Chrome(chrome_options=option)
     # browser.implicitly_wait(15)
-    engine = create_engine(sqlconn, echo=True, max_overflow=16)
+    engine = create_engine(sqlconn, echo=True, poolclass=NullPool)
     DBSession = sessionmaker(bind=engine)
-    session = DBSession()
     try:
         df = pd.read_csv('./url_split/' + sys.argv[1] + '.csv', engine='python')
         url_list = df.iloc[:, 0].values
@@ -171,15 +173,17 @@ def main():
         for index, url in enumerate(url_list):
             print("Index_{0}: {1}".format(index, url))
             # 查询是否已经访问过
+            session = DBSession()
             rows = session.query(WebpageInfo).filter(WebpageInfo.url.like(url), and_(WebpageInfo.vpn.like(vpn))).all()
             if rows:
                 print("已访问")
                 continue
-            visit(browser, session, url, vpn)
+            session.close()
+            visit(browser, DBSession, url, vpn)
     except Exception as error:
         _logger.error(error)
     finally:
-        session.close()
+        engine.dispose()
         browser.close()
         browser.quit()
 
