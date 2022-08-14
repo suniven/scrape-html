@@ -36,8 +36,9 @@ def visit(browser, DBSession, url, vpn):
     if not os.path.exists(file_save_folder):
         os.makedirs(file_save_folder)
     else:
-        print("已访问")
-        return  # 已经访问过了    之后酌情取消注释
+        if os.path.exists(file_save_folder + '/' + url.split('/')[-1] + '_page_source.html'):
+            print("已访问且访问成功")
+            return  # 已经访问过了    之后酌情取消注释
     # visit url
     try:
         browser.get(url)
@@ -58,7 +59,7 @@ def visit(browser, DBSession, url, vpn):
 
     # 等待页面加载完成并截图
     try:
-        timeout = time.time() + 15  # 15 seconds from now
+        timeout = time.time() + 10  # 10 seconds from now
         while True:
             try:
                 loadingState = browser.execute_script("return document.readyState")
@@ -68,8 +69,6 @@ def visit(browser, DBSession, url, vpn):
                 time.sleep(1)
             elif loadingState == 'interactive' or loadingState == 'complete' or time.time() > timeout:
                 break
-        # pause another 2 seconds, and then make full page screenshot
-        time.sleep(2)
         try:
             screenshot = file_save_folder + '/' + url.split('/')[-1] + '_screenshot.png'
             if not os.path.exists(screenshot):
@@ -173,20 +172,22 @@ def main():
         url_list = df.iloc[:, 0].values
         vpn = sys.argv[2]
         for index, url in enumerate(url_list):
-            print("Index_{0}: {1}".format(index, url))
-            # # 查询是否已经访问过
-            # session = DBSession()
-            # rows = session.query(WebpageInfo).filter(WebpageInfo.url.like(url), and_(WebpageInfo.vpn.like(vpn))).all()
-            # if rows:
-            #     print("已访问")
-            #     continue
-            # session.close()
-            visit(browser, DBSession, url, vpn)
+            try:
+                print("Index_{0}: {1}".format(index, url))
+                # # 查询是否已经访问过
+                # session = DBSession()
+                # rows = session.query(WebpageInfo).filter(WebpageInfo.url.like(url), and_(WebpageInfo.vpn.like(vpn))).all()
+                # if rows:
+                #     print("已访问")
+                #     continue
+                # session.close()
+                visit(browser, DBSession, url, vpn)
+            except Exception as error:
+                _logger.error(error)
     except Exception as error:
         _logger.error(error)
     finally:
         engine.dispose()
-        browser.close()
         browser.quit()
 
 
