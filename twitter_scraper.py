@@ -25,8 +25,8 @@ headers = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
 }
 proxies = {
-    'http': 'http://127.0.0.1:1080',
-    'https': 'http://127.0.0.1:1080'
+    'http': 'http://127.0.0.1:10809',
+    'https': 'http://127.0.0.1:10809'
 }
 
 
@@ -35,7 +35,9 @@ def visit(browser, DBSession, url, vpn):
     file_save_folder = './data/' + url.split('/')[-1] + '/' + vpn
     if not os.path.exists(file_save_folder):
         os.makedirs(file_save_folder)
-
+    else:
+        print("已访问")
+        return  # 已经访问过了    之后酌情取消注释
     # visit url
     try:
         browser.get(url)
@@ -150,8 +152,8 @@ def main():
     # 正常模式
     options = {
         'proxy': {
-            'http': 'http://127.0.0.1:1080',
-            'https': 'http://127.0.0.1:1080',
+            'http': 'http://127.0.0.1:10809',
+            'https': 'http://127.0.0.1:10809',
         }
     }
     browser = webdriver.Chrome(seleniumwire_options=options)
@@ -172,13 +174,13 @@ def main():
         vpn = sys.argv[2]
         for index, url in enumerate(url_list):
             print("Index_{0}: {1}".format(index, url))
-            # 查询是否已经访问过
-            session = DBSession()
-            rows = session.query(WebpageInfo).filter(WebpageInfo.url.like(url), and_(WebpageInfo.vpn.like(vpn))).all()
-            if rows:
-                print("已访问")
-                continue
-            session.close()
+            # # 查询是否已经访问过
+            # session = DBSession()
+            # rows = session.query(WebpageInfo).filter(WebpageInfo.url.like(url), and_(WebpageInfo.vpn.like(vpn))).all()
+            # if rows:
+            #     print("已访问")
+            #     continue
+            # session.close()
             visit(browser, DBSession, url, vpn)
     except Exception as error:
         _logger.error(error)
