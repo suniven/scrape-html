@@ -35,6 +35,10 @@ def visit(browser, DBSession, url, vpn):
     file_save_folder = './data/' + url.split('/')[-1] + '/' + vpn
     if not os.path.exists(file_save_folder):
         os.makedirs(file_save_folder)
+    else:
+        if os.path.exists(file_save_folder + '/' + url.split('/')[-1] + '_page_source.html'):
+            print("已访问")
+            return
 
     # visit url
     try:
@@ -117,6 +121,9 @@ def visit(browser, DBSession, url, vpn):
             # 同时保存一份到文件夹
             with open(file_save_folder + '/' + url.split('/')[-1] + '_redirect_info.txt', 'w') as f:
                 f.write(intermediate_urls)
+        # 清除缓存 防止temp文件占用空间
+        del browser.requests
+
         session = DBSession()
         session.add(webpage_info)
         session.commit()
@@ -172,13 +179,13 @@ def main():
         vpn = sys.argv[2]
         for index, url in enumerate(url_list):
             print("Index_{0}: {1}".format(index, url))
-            # 查询是否已经访问过
-            session = DBSession()
-            rows = session.query(WebpageInfo).filter(WebpageInfo.url.like(url), and_(WebpageInfo.vpn.like(vpn))).all()
-            if rows:
-                print("已访问")
-                continue
-            session.close()
+            # # 查询是否已经访问过
+            # session = DBSession()
+            # rows = session.query(WebpageInfo).filter(WebpageInfo.url.like(url), and_(WebpageInfo.vpn.like(vpn))).all()
+            # if rows:
+            #     print("已访问")
+            #     continue
+            # session.close()
             visit(browser, DBSession, url, vpn)
     except Exception as error:
         _logger.error(error)
