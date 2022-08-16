@@ -3,6 +3,7 @@
 import os
 import re
 import time
+import datetime
 import lxml
 from seleniumwire import webdriver
 from sqlalchemy import Column, String, create_engine, Integer
@@ -42,6 +43,7 @@ def visit(browser, DBSession, url, vpn):
 
     # visit url
     try:
+        print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         browser.get(url)
     except:
         _logger.error('Failed to visit ' + url)
