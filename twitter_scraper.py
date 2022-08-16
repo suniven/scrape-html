@@ -26,8 +26,8 @@ headers = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
 }
 proxies = {
-    'http': 'http://127.0.0.1:1080',
-    'https': 'http://127.0.0.1:1080'
+    'http': 'http://127.0.0.1:10809',
+    'https': 'http://127.0.0.1:10809'
 }
 
 
@@ -40,7 +40,6 @@ def visit(browser, DBSession, url, vpn):
         if os.path.exists(file_save_folder + '/' + url.split('/')[-1] + '_page_source.html'):
             print("已访问")
             return
-
     # visit url
     try:
         print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -64,7 +63,7 @@ def visit(browser, DBSession, url, vpn):
 
     # 等待页面加载完成并截图
     try:
-        timeout = time.time() + 15  # 15 seconds from now
+        timeout = time.time() + 10  # 10 seconds from now
         while True:
             try:
                 loadingState = browser.execute_script("return document.readyState")
@@ -163,8 +162,8 @@ def main():
     # 正常模式
     options = {
         'proxy': {
-            'http': 'http://127.0.0.1:1080',
-            'https': 'http://127.0.0.1:1080',
+            'http': 'http://127.0.0.1:10809',
+            'https': 'http://127.0.0.1:10809',
         }
     }
     browser = webdriver.Chrome(seleniumwire_options=options)
@@ -200,7 +199,6 @@ def main():
     finally:
         del browser.requests
         engine.dispose()
-        browser.close()
         browser.quit()
 
 
