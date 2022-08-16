@@ -95,6 +95,9 @@ def visit(browser, DBSession, url, vpn):
         webpage_info.text = ''
         webpage_info.landing_page = browser.current_url
         webpage_info.intermediate_urls = ''
+        if webpage_info.url == webpage_info.landing_page:
+            del browser.requests
+            return
         # text
         bs = BeautifulSoup(browser.page_source, "lxml")
         text = bs.get_text()
