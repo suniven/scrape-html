@@ -54,8 +54,10 @@ def visit(browser, DBSession, url, vpn):
             else:
                 print("Screenshot Already Exists.")
         except Exception as error:
+            del browser.requests
             _logger.error("Failed to take screenshot: " + url)
             return
+        del browser.requests
         return
 
     # 等待页面加载完成并截图
@@ -70,8 +72,6 @@ def visit(browser, DBSession, url, vpn):
                 time.sleep(1)
             elif loadingState == 'interactive' or loadingState == 'complete' or time.time() > timeout:
                 break
-        # pause another 2 seconds, and then make full page screenshot
-        time.sleep(2)
         try:
             screenshot = file_save_folder + '/' + url.split('/')[-1] + '_screenshot.png'
             if not os.path.exists(screenshot):
@@ -81,8 +81,10 @@ def visit(browser, DBSession, url, vpn):
                 print("Screenshot Already Exists.")
         except Exception as error:
             _logger.error("Failed To Take Screenshots: " + url)
+            del browser.requests
     except:
         _logger.error("Failed to take screenshots: " + url)
+        del browser.requests
 
     try:
         # 保存相关内容
@@ -130,6 +132,7 @@ def visit(browser, DBSession, url, vpn):
         session.close()
     except Exception as error:
         _logger.error("Failed to get info of {0}! {1}".format(url, error))
+        del browser.requests
 
     # # 提取网页中的图片并保存
     # try:
@@ -188,8 +191,10 @@ def main():
             # session.close()
             visit(browser, DBSession, url, vpn)
     except Exception as error:
+        del browser.requests
         _logger.error(error)
     finally:
+        del browser.requests
         engine.dispose()
         browser.close()
         browser.quit()
