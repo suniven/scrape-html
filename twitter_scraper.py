@@ -3,6 +3,7 @@
 import os
 import re
 import time
+import datetime
 import lxml
 from seleniumwire import webdriver
 from sqlalchemy import Column, String, create_engine, Integer
@@ -37,11 +38,12 @@ def visit(browser, DBSession, url, vpn):
         os.makedirs(file_save_folder)
     else:
         if os.path.exists(file_save_folder + '/' + url.split('/')[-1] + '_page_source.html'):
-            print("已访问且访问成功")
+            print("已访问")
             return  # 已经访问过了    之后酌情取消注释
     # visit url
     try:
         browser.get(url)
+        print('%Y-%m-%d %H:%M:%S')
     except:
         _logger.error('Failed to visit ' + url)
         # 截取失败截图
@@ -53,8 +55,10 @@ def visit(browser, DBSession, url, vpn):
             else:
                 print("Screenshot Already Exists.")
         except Exception as error:
+            del browser.requests
             _logger.error("Failed to take screenshot: " + url)
             return
+        del browser.requests
         return
 
     # 等待页面加载完成并截图
@@ -118,11 +122,13 @@ def visit(browser, DBSession, url, vpn):
             # 同时保存一份到文件夹
             with open(file_save_folder + '/' + url.split('/')[-1] + '_redirect_info.txt', 'w') as f:
                 f.write(intermediate_urls)
+        del browser.requests
         session = DBSession()
         session.add(webpage_info)
         session.commit()
         session.close()
     except Exception as error:
+        del browser.requests
         _logger.error("Failed to get info of {0}! {1}".format(url, error))
 
     # # 提取网页中的图片并保存
@@ -181,13 +187,17 @@ def main():
                 #     print("已访问")
                 #     continue
                 # session.close()
+                del browser.requests
                 visit(browser, DBSession, url, vpn)
             except Exception as error:
                 _logger.error(error)
     except Exception as error:
+        del browser.requests
         _logger.error(error)
     finally:
+        del browser.requests
         engine.dispose()
+        browser.close()
         browser.quit()
 
 
