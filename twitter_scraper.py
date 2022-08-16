@@ -83,10 +83,8 @@ def visit(browser, DBSession, url, vpn):
                 print("Screenshot Already Exists.")
         except Exception as error:
             _logger.error("Failed To Take Screenshots: " + url)
-            del browser.requests
     except:
         _logger.error("Failed to take screenshots: " + url)
-        del browser.requests
 
     try:
         # 保存相关内容
@@ -192,6 +190,7 @@ def main():
             #     continue
             # session.close()
             visit(browser, DBSession, url, vpn)
+            del browser.requests
     except Exception as error:
         del browser.requests
         _logger.error(error)
