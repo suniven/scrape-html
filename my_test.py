@@ -1,40 +1,57 @@
-
-import os
-import re
-import time
-import datetime
-import lxml
-from seleniumwire import webdriver
-from sqlalchemy import Column, String, create_engine, Integer
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.dialects import mysql
-from sqlalchemy.pool import NullPool
-from sqlalchemy.sql import and_, asc, desc, or_
-from common.model import WebpageInfo
-import common.logger as logger
-import sys
 import pandas as pd
-import requests
-from bs4 import BeautifulSoup
+import os
 
-seleniumwire_options = {
-    'proxy': {
-        'http': 'http://127.0.0.1:10809',
-        'https': 'http://127.0.0.1:10809',
-    },
-    'request_storage_base_dir': './storage/selenium-wire-request/'
-}
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument('--headless')
-chrome_options.add_argument("--window-size=1920,1080")
-browser = webdriver.Chrome(seleniumwire_options=seleniumwire_options, chrome_options=chrome_options)
-# browser.maximize_window()
-browser.implicitly_wait(10)
-browser.get('https://youtube.com')
-time.sleep(4)
-browser.close()
-browser.quit()
+white_list = ['twitter.com', 'google.com', 'facebook.com',
+              'instagram.com', 'youtube.com', 'youtu.be', 'gmail.com']
+
+
+def main():
+    url_df = pd.read_csv('./urls_unique.csv',
+                         encoding='utf-8', engine='python')
+    filter_df = url_df[~url_df['domain'].isin(white_list)]
+    filter_df.to_csv('./urls_unique_filter.csv', index=False)
+
+
+if __name__ == '__main__':
+    main()
+
+
+# import os
+# import re
+# import time
+# import datetime
+# import lxml
+# from seleniumwire import webdriver
+# from sqlalchemy import Column, String, create_engine, Integer
+# from sqlalchemy.orm import sessionmaker
+# from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.dialects import mysql
+# from sqlalchemy.pool import NullPool
+# from sqlalchemy.sql import and_, asc, desc, or_
+# from common.model import WebpageInfo
+# import common.logger as logger
+# import sys
+# import pandas as pd
+# import requests
+# from bs4 import BeautifulSoup
+
+# seleniumwire_options = {
+#     'proxy': {
+#         'http': 'http://127.0.0.1:10809',
+#         'https': 'http://127.0.0.1:10809',
+#     },
+#     'request_storage_base_dir': './storage/selenium-wire-request/'
+# }
+# chrome_options = webdriver.ChromeOptions()
+# chrome_options.add_argument('--headless')
+# chrome_options.add_argument("--window-size=1920,1080")
+# browser = webdriver.Chrome(seleniumwire_options=seleniumwire_options, chrome_options=chrome_options)
+# # browser.maximize_window()
+# browser.implicitly_wait(10)
+# browser.get('https://youtube.com')
+# time.sleep(4)
+# browser.close()
+# browser.quit()
 
 # import pandas as pd
 #
