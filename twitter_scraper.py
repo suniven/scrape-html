@@ -39,9 +39,11 @@ def visit(browser, DBSession, url, vpn):
     else:
         if os.path.exists(file_save_folder + '/' + url.split('/')[-1] + '_page_source.html'):
             print("已访问")
-            return  # 已经访问过了    之后酌情取消注释
+            return
+
     # visit url
     try:
+        print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         browser.get(url)
         print('%Y-%m-%d %H:%M:%S')
     except:
@@ -98,6 +100,9 @@ def visit(browser, DBSession, url, vpn):
         webpage_info.text = ''
         webpage_info.landing_page = browser.current_url
         webpage_info.intermediate_urls = ''
+        if webpage_info.url == webpage_info.landing_page:
+            del browser.requests
+            return
         # text
         bs = BeautifulSoup(browser.page_source, "lxml")
         text = bs.get_text()
@@ -126,7 +131,9 @@ def visit(browser, DBSession, url, vpn):
             # 同时保存一份到文件夹
             with open(file_save_folder + '/' + url.split('/')[-1] + '_redirect_info.txt', 'w') as f:
                 f.write(intermediate_urls)
+        # 清除缓存 防止temp文件占用空间
         del browser.requests
+
         session = DBSession()
         session.add(webpage_info)
         session.commit()
@@ -134,6 +141,7 @@ def visit(browser, DBSession, url, vpn):
     except Exception as error:
         del browser.requests
         _logger.error("Failed to get info of {0}! {1}".format(url, error))
+        del browser.requests
 
     # # 提取网页中的图片并保存
     # try:
