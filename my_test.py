@@ -1,20 +1,68 @@
 import pandas as pd
 import os
 
-white_list = ['twitter.com', 'google.com', 'facebook.com',
-              'instagram.com', 'youtube.com', 'youtu.be', 'gmail.com']
+
+# 重命名图片 添加landing page域名信息
+def rename(base):
+    for root, ds, fs in os.walk(base):
+        for f in fs:
+            if f.endswith(".png"):
+                id = root.split('\\')[-2]
+                if f.startswith(id):
+                    fullname = os.path.join(root, f)
+                    try:
+                        domain = df.loc[df['url'] == 'https://t.co/' + id, :].iloc[0, 1].split('/')[2]
+                    except:
+                        domain = 'none'
+                    re_name = id + '_' + domain + '_screenshot.png'
+                    re_name_path = os.path.join(root, re_name)
+                    if not os.path.exists(re_name_path):
+                        os.rename(fullname, re_name_path)
+                        print("重命名：", re_name_path)
+                    else:
+                        print("已存在")
+                # print(root, f, fullname)
 
 
-def main():
-    url_df = pd.read_csv('./urls_unique.csv',
-                         encoding='utf-8', engine='python')
-    filter_df = url_df[~url_df['domain'].isin(white_list)]
-    filter_df.to_csv('./urls_unique_filter.csv', index=False)
+df = pd.read_csv('./20220817-twitter-url-landing_page.csv', engine='python')
+rename('F:\\Project\\YouTube Twitter URL data\\')
 
+# # 合并URLcsv文件
+#
+# def find_all_files(base):
+#     for root, ds, fs in os.walk(base):
+#         for f in fs:
+#             if f.endswith(".csv"):
+#                 fullname = os.path.join(root, f)
+#                 yield fullname
+#
+#
+# def join():
+#     new_df = pd.DataFrame()
+#     for file in find_all_files('F:\\db-url-landing_page\\'):
+#         df = pd.read_csv(file, encoding='utf-8', engine='python')
+#         new_df = pd.concat([df, new_df], ignore_index=True)
+#
+#     new_df.to_csv('F:\\db-url-landing_page\\20220817-twitter-url-landing_page.csv', index=False,
+#                   columns=['url', 'landing_page'])
+#
+#
+# join()
 
-if __name__ == '__main__':
-    main()
+# import pandas as pd
+# import os
 
+# white_list = ['twitter.com', 'google.com', 'facebook.com',
+#               'instagram.com', 'youtube.com', 'youtu.be', 'gmail.com']
+
+# def main():
+#     url_df = pd.read_csv('./urls_unique.csv',
+#                          encoding='utf-8', engine='python')
+#     filter_df = url_df[~url_df['domain'].isin(white_list)]
+#     filter_df.to_csv('./urls_unique_filter.csv', index=False)
+
+# if __name__ == '__main__':
+#     main()
 
 # import os
 # import re

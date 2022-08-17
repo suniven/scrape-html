@@ -33,7 +33,7 @@ proxies = {
 
 def visit(browser, DBSession, url, vpn):
     # 创建存储该webpage内容的文件夹
-    file_save_folder = './data/' + url.split('/')[-1] + '/' + vpn
+    file_save_folder = './data_youtube/' + url.split('/')[-1] + '/' + vpn
     if not os.path.exists(file_save_folder):
         os.makedirs(file_save_folder)
     else:
@@ -45,7 +45,6 @@ def visit(browser, DBSession, url, vpn):
     try:
         print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         browser.get(url)
-        print('%Y-%m-%d %H:%M:%S')
     except:
         _logger.error('Failed to visit ' + url)
         # 截取失败截图
@@ -113,6 +112,8 @@ def visit(browser, DBSession, url, vpn):
             f.write(browser.page_source)
         with open(file_save_folder + '/' + url.split('/')[-1] + '_text.txt', 'w', encoding='utf-8') as f:
             f.write(text)
+        with open(file_save_folder) as f:
+            f.write()
         # intermediate_urls
         # Access requests via the `requests` attribute
         intermediate_urls = ''
@@ -189,7 +190,7 @@ def main():
     engine = create_engine(sqlconn, echo=True, poolclass=NullPool)
     DBSession = sessionmaker(bind=engine)
     try:
-        df = pd.read_csv('./url_split/' + sys.argv[1] + '.csv', engine='python')
+        df = pd.read_csv('./url_split_youtube/' + sys.argv[1] + '.csv', engine='python')
         url_list = df.iloc[:, 0].values
         vpn = sys.argv[2]
         for index, url in enumerate(url_list):

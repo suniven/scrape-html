@@ -131,3 +131,5 @@ dmypy.json
 data/
 storage/
 .idea/
+test_data/
+data_youtube/
