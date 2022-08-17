@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import re
 
 
 # 重命名图片 添加landing page域名信息
@@ -12,6 +13,8 @@ def rename(base):
                     fullname = os.path.join(root, f)
                     try:
                         domain = df.loc[df['url'] == 'https://t.co/' + id, :].iloc[0, 1].split('/')[2]
+                        if ':' in domain:  # 有端口号
+                            domain = re.sub(r'\:[0-9]+', '', domain)
                     except:
                         domain = 'none'
                     re_name = id + '_' + domain + '_screenshot.png'
