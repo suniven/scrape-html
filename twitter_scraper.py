@@ -166,15 +166,18 @@ def visit(browser, DBSession, url, vpn):
 
 
 def main():
-    # 正常模式
-    options = {
+    seleniumwire_options = {
         'proxy': {
             'http': 'http://127.0.0.1:10809',
             'https': 'http://127.0.0.1:10809',
-        }
+        },
+        'request_storage_base_dir': './storage/selenium-wire-request/'
     }
-    browser = webdriver.Chrome(seleniumwire_options=options)
-    browser.maximize_window()
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument("--window-size=1920,1080")
+    browser = webdriver.Chrome(seleniumwire_options=seleniumwire_options, chrome_options=chrome_options)
+    # browser.maximize_window()
     browser.implicitly_wait(10)
 
     # # headless模式

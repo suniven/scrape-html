@@ -1,31 +1,69 @@
+
+import os
+import re
+import time
+import datetime
+import lxml
+from seleniumwire import webdriver
+from sqlalchemy import Column, String, create_engine, Integer
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.dialects import mysql
+from sqlalchemy.pool import NullPool
+from sqlalchemy.sql import and_, asc, desc, or_
+from common.model import WebpageInfo
+import common.logger as logger
+import sys
 import pandas as pd
+import requests
+from bs4 import BeautifulSoup
 
+seleniumwire_options = {
+    'proxy': {
+        'http': 'http://127.0.0.1:10809',
+        'https': 'http://127.0.0.1:10809',
+    },
+    'request_storage_base_dir': './storage/selenium-wire-request/'
+}
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument('--headless')
+chrome_options.add_argument("--window-size=1920,1080")
+browser = webdriver.Chrome(seleniumwire_options=seleniumwire_options, chrome_options=chrome_options)
+# browser.maximize_window()
+browser.implicitly_wait(10)
+browser.get('https://youtube.com')
+time.sleep(4)
+browser.close()
+browser.quit()
 
-def main():
-    start = 0
-    step = 2000
-    csv_file_path = './url_list.csv'
-    save_path = './url_split/'
-    url_df = pd.read_csv(csv_file_path, encoding='utf-8', engine='python', na_values='null')
-    # url_df = url_df.reindex(columns=url_df.columns.tolist() + ["redirect_url"])
-    count = url_df.shape[0]
-    i = 1
-    while count > 0:
-        if count < step:
-            end = url_df.shape[0]
-        else:
-            end = start + step
-        # block_df = url_df.iloc[start:end, :]
-        # block_df.to_csv(save_path + "{0}.csv".format(i), index=False)
-        with open(save_path + 'records.txt', 'a') as f:
-            f.write("{0}: {1}-{2}\n".format(i, start, end - 1))
-        i += 1
-        count -= step
-        start = end
-
-
-if __name__ == '__main__':
-    main()
+# import pandas as pd
+#
+#
+# def main():
+#     start = 0
+#     step = 2000
+#     csv_file_path = './url_list.csv'
+#     save_path = './url_split/'
+#     url_df = pd.read_csv(csv_file_path, encoding='utf-8', engine='python', na_values='null')
+#     # url_df = url_df.reindex(columns=url_df.columns.tolist() + ["redirect_url"])
+#     count = url_df.shape[0]
+#     i = 1
+#     while count > 0:
+#         if count < step:
+#             end = url_df.shape[0]
+#         else:
+#             end = start + step
+#         # block_df = url_df.iloc[start:end, :]
+#         # block_df.to_csv(save_path + "{0}.csv".format(i), index=False)
+#         with open(save_path + 'records.txt', 'a') as f:
+#             f.write("{0}: {1}-{2}\n".format(i, start, end - 1))
+#         i += 1
+#         count -= step
+#         start = end
+#
+#
+# if __name__ == '__main__':
+#     main()
 
 # import os
 # import re
