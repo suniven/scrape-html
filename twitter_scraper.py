@@ -77,6 +77,8 @@ def visit(browser, DBSession, url, vpn):
         try:
             try:
                 domain = browser.current_url.split('/')[2]
+                if ':' in domain:  # 有端口号
+                    domain = re.sub(r'\:[0-9]+', '', domain)
             except:
                 domain = 'none'
             screenshot = file_save_folder + '/' + url.split('/')[-1] + '_' + domain + '_screenshot.png'
@@ -112,6 +114,8 @@ def visit(browser, DBSession, url, vpn):
             f.write(browser.page_source)
         with open(file_save_folder + '/' + url.split('/')[-1] + '_text.txt', 'w', encoding='utf-8') as f:
             f.write(text)
+        with open(file_save_folder + '/' + url.split('/')[-1] + '_landing_page_url.txt', 'a', encoding='utf-8')as f:
+            f.write(browser.current_url + '\n')
         # intermediate_urls
         # Access requests via the `requests` attribute
         intermediate_urls = ''
