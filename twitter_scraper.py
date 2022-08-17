@@ -74,7 +74,11 @@ def visit(browser, DBSession, url, vpn):
             elif loadingState == 'interactive' or loadingState == 'complete' or time.time() > timeout:
                 break
         try:
-            screenshot = file_save_folder + '/' + url.split('/')[-1] + '_screenshot.png'
+            try:
+                domain = browser.current_url.split('/')[2]
+            except:
+                domain = 'none'
+            screenshot = file_save_folder + '/' + url.split('/')[-1] + '_' + domain + '_screenshot.png'
             if not os.path.exists(screenshot):
                 browser.save_screenshot(screenshot)
                 print("Take Screenshot successfully.")
@@ -187,8 +191,8 @@ def main():
                 #     print("已访问")
                 #     continue
                 # session.close()
-                del browser.requests
                 visit(browser, DBSession, url, vpn)
+                del browser.requests
             except Exception as error:
                 _logger.error(error)
     except Exception as error:
