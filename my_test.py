@@ -1,40 +1,108 @@
-
+import pandas as pd
 import os
 import re
-import time
-import datetime
-import lxml
-from seleniumwire import webdriver
-from sqlalchemy import Column, String, create_engine, Integer
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.dialects import mysql
-from sqlalchemy.pool import NullPool
-from sqlalchemy.sql import and_, asc, desc, or_
-from common.model import WebpageInfo
-import common.logger as logger
-import sys
-import pandas as pd
-import requests
-from bs4 import BeautifulSoup
 
-seleniumwire_options = {
-    'proxy': {
-        'http': 'http://127.0.0.1:10809',
-        'https': 'http://127.0.0.1:10809',
-    },
-    'request_storage_base_dir': './storage/selenium-wire-request/'
-}
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument('--headless')
-chrome_options.add_argument("--window-size=1920,1080")
-browser = webdriver.Chrome(seleniumwire_options=seleniumwire_options, chrome_options=chrome_options)
-# browser.maximize_window()
-browser.implicitly_wait(10)
-browser.get('https://youtube.com')
-time.sleep(4)
-browser.close()
-browser.quit()
+
+# 重命名图片 添加landing page域名信息
+def rename(base):
+    for root, ds, fs in os.walk(base):
+        for f in fs:
+            if f.endswith(".png"):
+                id = root.split('\\')[-2]
+                if f.startswith(id):
+                    fullname = os.path.join(root, f)
+                    try:
+                        domain = df.loc[df['url'] == 'https://t.co/' + id, :].iloc[0, 1].split('/')[2]
+                        if ':' in domain:  # 有端口号
+                            domain = re.sub(r'\:[0-9]+', '', domain)
+                    except:
+                        domain = 'none'
+                    re_name = id + '_' + domain + '_screenshot.png'
+                    re_name_path = os.path.join(root, re_name)
+                    if not os.path.exists(re_name_path):
+                        os.rename(fullname, re_name_path)
+                        print("重命名：", re_name_path)
+                    else:
+                        print("已存在")
+                # print(root, f, fullname)
+
+
+df = pd.read_csv('./20220817-twitter-url-landing_page.csv', engine='python')
+rename('F:\\Project\\YouTube Twitter URL data\\')
+
+# # 合并URLcsv文件
+#
+# def find_all_files(base):
+#     for root, ds, fs in os.walk(base):
+#         for f in fs:
+#             if f.endswith(".csv"):
+#                 fullname = os.path.join(root, f)
+#                 yield fullname
+#
+#
+# def join():
+#     new_df = pd.DataFrame()
+#     for file in find_all_files('F:\\db-url-landing_page\\'):
+#         df = pd.read_csv(file, encoding='utf-8', engine='python')
+#         new_df = pd.concat([df, new_df], ignore_index=True)
+#
+#     new_df.to_csv('F:\\db-url-landing_page\\20220817-twitter-url-landing_page.csv', index=False,
+#                   columns=['url', 'landing_page'])
+#
+#
+# join()
+
+# import pandas as pd
+# import os
+
+# white_list = ['twitter.com', 'google.com', 'facebook.com',
+#               'instagram.com', 'youtube.com', 'youtu.be', 'gmail.com']
+
+# def main():
+#     url_df = pd.read_csv('./urls_unique.csv',
+#                          encoding='utf-8', engine='python')
+#     filter_df = url_df[~url_df['domain'].isin(white_list)]
+#     filter_df.to_csv('./urls_unique_filter.csv', index=False)
+
+# if __name__ == '__main__':
+#     main()
+
+# import os
+# import re
+# import time
+# import datetime
+# import lxml
+# from seleniumwire import webdriver
+# from sqlalchemy import Column, String, create_engine, Integer
+# from sqlalchemy.orm import sessionmaker
+# from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.dialects import mysql
+# from sqlalchemy.pool import NullPool
+# from sqlalchemy.sql import and_, asc, desc, or_
+# from common.model import WebpageInfo
+# import common.logger as logger
+# import sys
+# import pandas as pd
+# import requests
+# from bs4 import BeautifulSoup
+
+# seleniumwire_options = {
+#     'proxy': {
+#         'http': 'http://127.0.0.1:10809',
+#         'https': 'http://127.0.0.1:10809',
+#     },
+#     'request_storage_base_dir': './storage/selenium-wire-request/'
+# }
+# chrome_options = webdriver.ChromeOptions()
+# chrome_options.add_argument('--headless')
+# chrome_options.add_argument("--window-size=1920,1080")
+# browser = webdriver.Chrome(seleniumwire_options=seleniumwire_options, chrome_options=chrome_options)
+# # browser.maximize_window()
+# browser.implicitly_wait(10)
+# browser.get('https://youtube.com')
+# time.sleep(4)
+# browser.close()
+# browser.quit()
 
 # import pandas as pd
 #

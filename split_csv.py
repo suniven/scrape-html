@@ -4,8 +4,8 @@ import pandas as pd
 def main():
     start = 0
     step = 2000
-    csv_file_path = './url_list.csv'
-    save_path = './url_split/'
+    csv_file_path = './youtube_unique_filtered.csv'
+    save_path = './url_split_youtube/'
     url_df = pd.read_csv(csv_file_path, encoding='utf-8', engine='python', na_values='null')
     # url_df = url_df.reindex(columns=url_df.columns.tolist() + ["redirect_url"])
     count = url_df.shape[0]

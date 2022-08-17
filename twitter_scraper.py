@@ -26,8 +26,8 @@ headers = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
 }
 proxies = {
-    'http': 'http://127.0.0.1:10809',
-    'https': 'http://127.0.0.1:10809'
+    'http': 'http://127.0.0.1:1080',
+    'https': 'http://127.0.0.1:1080'
 }
 
 
@@ -45,7 +45,6 @@ def visit(browser, DBSession, url, vpn):
     try:
         print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         browser.get(url)
-        print('%Y-%m-%d %H:%M:%S')
     except:
         _logger.error('Failed to visit ' + url)
         # 截取失败截图
@@ -168,8 +167,8 @@ def visit(browser, DBSession, url, vpn):
 def main():
     seleniumwire_options = {
         'proxy': {
-            'http': 'http://127.0.0.1:10809',
-            'https': 'http://127.0.0.1:10809',
+            'http': 'http://127.0.0.1:1080',
+            'https': 'http://127.0.0.1:1080',
         },
         'request_storage_base_dir': './storage/selenium-wire-request/'
     }
