@@ -35,8 +35,8 @@ proxies = {
 def visit(browser, DBSession, url, vpn):
     # 创建存储该webpage内容的文件夹
     url_hash = hashlib.md5(url.encode('UTF-8')).hexdigest()  # hash(url)
-    url = '/'.join(url.split('/')[2:])
-    url_legal_name = re.sub(r'[\\/\:\*\?"<>\|]', '', url)  # 替换命名规则不允许的特殊字符
+    url_temp = '/'.join(url.split('/')[2:])
+    url_legal_name = re.sub(r'[\\/\:\*\?"<>\|]', '', url_temp)  # 替换命名规则不允许的特殊字符
     if len(url_legal_name) > 100:
         url_legal_name = url_legal_name[:100]
 
