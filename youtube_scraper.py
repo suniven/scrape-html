@@ -98,6 +98,7 @@ def visit(browser, DBSession, url, vpn):
         _logger.error("Failed to take screenshots: " + url)
 
     try:
+        print("插入数据库......")
         # 保存相关内容
         webpage_info = WebpageInfo()
         webpage_info.vpn = vpn
@@ -107,9 +108,9 @@ def visit(browser, DBSession, url, vpn):
         webpage_info.text = ''
         webpage_info.landing_page = browser.current_url
         webpage_info.intermediate_urls = ''
-        if webpage_info.url == webpage_info.landing_page:
-            del browser.requests
-            return
+        # if webpage_info.url == webpage_info.landing_page:
+        #     del browser.requests
+        #     return
         # text
         bs = BeautifulSoup(browser.page_source, "lxml")
         text = bs.get_text()
