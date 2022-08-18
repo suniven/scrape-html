@@ -37,9 +37,10 @@ def visit(browser, DBSession, url, vpn):
     if not os.path.exists(file_save_folder):
         os.makedirs(file_save_folder)
     else:
-        if os.path.exists(file_save_folder + '/' + url.split('/')[-1] + '_page_source.html'):
-            print("已访问")
-            return
+        # if os.path.exists(file_save_folder + '/' + url.split('/')[-1] + '_page_source.html'):
+        #     print("已访问")
+        #     return
+        return
 
     # visit url
     try:

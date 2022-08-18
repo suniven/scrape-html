@@ -59,7 +59,7 @@ def visit(browser, DBSession, url, vpn):
             screenshot = file_save_folder + '/_incomplete_' + url_hash + '_screenshot.png'
             if not os.path.exists(screenshot):
                 browser.save_screenshot(screenshot)
-                print("Take Screenshot successfully.")
+                print("Fail to visit. Take Screenshot successfully.")
             else:
                 print("Screenshot Already Exists.")
         except Exception as error:
@@ -102,6 +102,7 @@ def visit(browser, DBSession, url, vpn):
         webpage_info = WebpageInfo()
         webpage_info.vpn = vpn
         webpage_info.url = url
+        webpage_info.url_hash = url_hash
         webpage_info.html = browser.page_source
         webpage_info.text = ''
         webpage_info.landing_page = browser.current_url
