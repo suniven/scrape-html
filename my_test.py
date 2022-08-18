@@ -1,34 +1,38 @@
 import pandas as pd
-import os
-import re
 
 
-# 重命名图片 添加landing page域名信息
-def rename(base):
-    for root, ds, fs in os.walk(base):
-        for f in fs:
-            if f.endswith(".png"):
-                id = root.split('\\')[-2]
-                if f.startswith(id):
-                    fullname = os.path.join(root, f)
-                    try:
-                        domain = df.loc[df['url'] == 'https://t.co/' + id, :].iloc[0, 1].split('/')[2]
-                        if ':' in domain:  # 有端口号
-                            domain = re.sub(r'\:[0-9]+', '', domain)
-                    except:
-                        domain = 'none'
-                    re_name = id + '_' + domain + '_screenshot.png'
-                    re_name_path = os.path.join(root, re_name)
-                    if not os.path.exists(re_name_path):
-                        os.rename(fullname, re_name_path)
-                        print("重命名：", re_name_path)
-                    else:
-                        print("已存在")
-                # print(root, f, fullname)
 
-
-df = pd.read_csv('./20220817-twitter-url-landing_page.csv', engine='python')
-rename('F:\\Project\\YouTube Twitter URL data\\')
+# import pandas as pd
+# import os
+# import re
+#
+#
+# # 重命名图片 添加landing page域名信息
+# def rename(base):
+#     for root, ds, fs in os.walk(base):
+#         for f in fs:
+#             if f.endswith(".png"):
+#                 id = root.split('\\')[-2]
+#                 if f.startswith(id):
+#                     fullname = os.path.join(root, f)
+#                     try:
+#                         domain = df.loc[df['url'] == 'https://t.co/' + id, :].iloc[0, 1].split('/')[2]
+#                         if ':' in domain:  # 有端口号
+#                             domain = re.sub(r'\:[0-9]+', '', domain)
+#                     except:
+#                         domain = 'none'
+#                     re_name = id + '_' + domain + '_screenshot.png'
+#                     re_name_path = os.path.join(root, re_name)
+#                     if not os.path.exists(re_name_path):
+#                         os.rename(fullname, re_name_path)
+#                         print("重命名：", re_name_path)
+#                     else:
+#                         print("已存在")
+#                 # print(root, f, fullname)
+#
+#
+# df = pd.read_csv('./20220817-twitter-url-landing_page.csv', engine='python')
+# rename('F:\\Project\\YouTube Twitter URL data\\')
 
 # # 合并URLcsv文件
 #

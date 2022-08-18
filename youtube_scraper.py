@@ -18,6 +18,7 @@ import sys
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+import hashlib
 
 sqlconn = 'mysql+pymysql://root:1101syw@localhost:3306/youtube_twitter_url?charset=utf8mb4'
 _logger = logger.Logger('info')
@@ -33,11 +34,17 @@ proxies = {
 
 def visit(browser, DBSession, url, vpn):
     # 创建存储该webpage内容的文件夹
-    file_save_folder = './data_youtube/' + url.split('/')[-1] + '/' + vpn
+    url_hash = hashlib.md5(url.encode('UTF-8')).hexdigest()  # hash(url)
+    url = '/'.join(url.split('/')[2:])
+    url_legal_name = re.sub(r'[\\/\:\*\?"<>\|]', '', url)  # 替换命名规则不允许的特殊字符
+    if len(url_legal_name) > 100:
+        url_legal_name = url_legal_name[:100]
+
+    file_save_folder = './data_youtube/' + url_hash + '/' + vpn
     if not os.path.exists(file_save_folder):
         os.makedirs(file_save_folder)
     else:
-        if os.path.exists(file_save_folder + '/' + url.split('/')[-1] + '_page_source.html'):
+        if os.path.exists(file_save_folder + '/' + url_hash + '_page_source.html'):
             print("已访问")
             return
 
@@ -49,7 +56,7 @@ def visit(browser, DBSession, url, vpn):
         _logger.error('Failed to visit ' + url)
         # 截取失败截图
         try:
-            screenshot = file_save_folder + '/_incomplete_' + url.split('/')[-1] + '_screenshot.png'
+            screenshot = file_save_folder + '/_incomplete_' + url_hash + '_screenshot.png'
             if not os.path.exists(screenshot):
                 browser.save_screenshot(screenshot)
                 print("Take Screenshot successfully.")
@@ -79,7 +86,7 @@ def visit(browser, DBSession, url, vpn):
                 domain = browser.current_url.split('/')[2]
             except:
                 domain = 'none'
-            screenshot = file_save_folder + '/' + url.split('/')[-1] + '_' + domain + '_screenshot.png'
+            screenshot = file_save_folder + '/' + url_hash + '_' + domain + '_screenshot_' + url_legal_name + '.png'
             if not os.path.exists(screenshot):
                 browser.save_screenshot(screenshot)
                 print("Take Screenshot successfully.")
@@ -108,12 +115,12 @@ def visit(browser, DBSession, url, vpn):
         if text:
             webpage_info.text = text
         # 同时保存一份到文件夹
-        with open(file_save_folder + '/' + url.split('/')[-1] + '_page_source.html', 'w', encoding='utf-8') as f:
+        with open(file_save_folder + '/' + url_hash + '_page_source.html', 'w', encoding='utf-8') as f:
             f.write(browser.page_source)
-        with open(file_save_folder + '/' + url.split('/')[-1] + '_text.txt', 'w', encoding='utf-8') as f:
+        with open(file_save_folder + '/' + url_hash + '_text.txt', 'w', encoding='utf-8') as f:
             f.write(text)
-        with open(file_save_folder) as f:
-            f.write()
+        with open(file_save_folder + '/' + url_hash + '_landing_page_url.txt', 'w', encoding='utf-8') as f:
+            f.write(browser.current_url + '\n')
         # intermediate_urls
         # Access requests via the `requests` attribute
         intermediate_urls = ''
@@ -130,7 +137,7 @@ def visit(browser, DBSession, url, vpn):
         if intermediate_urls:
             webpage_info.intermediate_urls = intermediate_urls
             # 同时保存一份到文件夹
-            with open(file_save_folder + '/' + url.split('/')[-1] + '_redirect_info.txt', 'w') as f:
+            with open(file_save_folder + '/' + url_hash + '_redirect_info.txt', 'w') as f:
                 f.write(intermediate_urls)
         # 清除缓存 防止temp文件占用空间
         del browser.requests
