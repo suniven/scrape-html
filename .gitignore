@@ -128,9 +128,10 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-data/
+data_old/
 storage/
 .idea/
 test_data/
 data_youtube/
 data_twitter_re_scrape/
+data_twitter/
