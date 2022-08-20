@@ -13,7 +13,6 @@ class WebpageInfo(Base):
 
     id = Column(mysql.BIGINT, primary_key=True)
     url = Column(String(1000))
-    url_hash = Column(String(32))
     landing_page = Column(String(3000))
     intermediate_urls = Column(Text)
     html = Column(Text)

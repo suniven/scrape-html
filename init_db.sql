@@ -2,7 +2,6 @@ CREATE TABLE IF NOT EXISTS `webpage_info`
 (
     `id`                bigint(20) auto_increment NOT NULL COMMENT 'id',
     `url`               varchar(1000)             NOT NULL COMMENT 'short url in comments',
-    `url_hash`          varchar(32)               NOT NULL DEFAULT '' COMMENT 'md5(url)',
     `landing_page`      varchar(3000)             NOT NULL DEFAULT '' COMMENT 'first landing page of short url',
     `intermediate_urls` mediumtext                NOT NULL COMMENT '从 short url 到 first landing page 中间经过的 URLs',
     `html`              mediumtext                NOT NULL COMMENT 'HTML源码',
