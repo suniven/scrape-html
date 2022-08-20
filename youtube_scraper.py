@@ -188,7 +188,7 @@ def main():
     chrome_options.add_argument("--window-size=1920,1080")
     browser = webdriver.Chrome(seleniumwire_options=seleniumwire_options, chrome_options=chrome_options)
     # browser.maximize_window()
-    browser.implicitly_wait(10)
+    browser.implicitly_wait(6)
 
     # # headless模式
     # option = webdriver.ChromeOptions()

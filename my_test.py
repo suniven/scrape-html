@@ -1,6 +1,27 @@
-import pandas as pd
+# 移动text和html
+import os
+import shutil
 
 
+def move(base, dest_dir):
+    for root, ds, fs in os.walk(base):
+        for f in fs:
+            if f.endswith("_text.txt") or f.endswith('.html'):
+                # id = root.split('\\')[-2]
+                fullname = os.path.join(root, f)
+                raw_path = fullname
+                dest_path = dest_dir + '/' + f
+                if not os.path.exists(dest_dir):
+                    os.makedirs(dest_dir)
+                if not os.path.exists(dest_path):
+                    shutil.copy(raw_path, dest_path)
+                    print("移动：", dest_path)
+                else:
+                    print("已存在")
+
+
+move('H:\\Project\\YouTube Twitter URL data\\','H:\\text_and_html\\')
+# move('./test', './text and html/')
 
 # import pandas as pd
 # import os
