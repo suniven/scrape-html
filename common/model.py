@@ -12,10 +12,22 @@ class WebpageInfo(Base):
     __tablename__ = 'webpage_info'
 
     id = Column(mysql.BIGINT, primary_key=True)
-    url = Column(String(1000))
+    url = Column(String(1500))
     url_hash = Column(String(32))
-    landing_page = Column(String(3000))
+    landing_page = Column(String(5000))
     intermediate_urls = Column(Text)
     html = Column(Text)
     text = Column(Text)
+    vpn = Column(String(50))
+
+
+class WebpageInfoAbs(Base):
+    # 表名
+    __tablename__ = 'webpage_info_abs'
+
+    id = Column(mysql.BIGINT, primary_key=True)
+    url = Column(String(1500))
+    url_hash = Column(String(32))
+    landing_page = Column(String(5000))
+    intermediate_urls = Column(Text)
     vpn = Column(String(50))

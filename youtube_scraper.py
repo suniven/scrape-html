@@ -12,7 +12,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects import mysql
 from sqlalchemy.pool import NullPool
 from sqlalchemy.sql import and_, asc, desc, or_
-from common.model import WebpageInfo
+from common.model import WebpageInfo, WebpageInfoAbs
 import common.logger as logger
 import sys
 import pandas as pd
@@ -44,7 +44,7 @@ def visit(browser, DBSession, url, vpn):
     if not os.path.exists(file_save_folder):
         os.makedirs(file_save_folder)
     else:
-        if os.path.exists(file_save_folder + '/' + url_hash + '_page_source.html'):
+        if os.path.exists(file_save_folder + '/' + url_hash + '_landing_page_url.txt'):
             print("已访问")
             return
 
@@ -108,6 +108,14 @@ def visit(browser, DBSession, url, vpn):
         webpage_info.text = ''
         webpage_info.landing_page = browser.current_url
         webpage_info.intermediate_urls = ''
+
+        webpage_info_abs = WebpageInfoAbs()
+        webpage_info_abs.vpn = vpn
+        webpage_info_abs.url = url
+        webpage_info_abs.url_hash = url_hash
+        webpage_info_abs.landing_page = browser.current_url
+        webpage_info_abs.intermediate_urls = ''
+
         # if webpage_info.url == webpage_info.landing_page:
         #     del browser.requests
         #     return
@@ -129,6 +137,8 @@ def visit(browser, DBSession, url, vpn):
         for request in browser.requests:
             if request.response:
                 if int(request.response.status_code / 100) == 3:  # 301 302 303 307 308
+                    if request.url == url and request.response.headers['location'] == browser.current_url:
+                        continue
                     intermediate_urls += "{0}\t{1}\t{2}\n".format(request.response.status_code, request.url,
                                                                   request.response.headers['location'])
                     print(
@@ -138,6 +148,7 @@ def visit(browser, DBSession, url, vpn):
                     )
         if intermediate_urls:
             webpage_info.intermediate_urls = intermediate_urls
+            webpage_info_abs.intermediate_urls = intermediate_urls
             # 同时保存一份到文件夹
             with open(file_save_folder + '/' + url_hash + '_redirect_info.txt', 'w') as f:
                 f.write(intermediate_urls)
@@ -146,6 +157,8 @@ def visit(browser, DBSession, url, vpn):
 
         session = DBSession()
         session.add(webpage_info)
+        session.commit()
+        session.add(webpage_info_abs)
         session.commit()
         session.close()
     except Exception as error:
